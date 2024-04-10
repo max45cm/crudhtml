@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confeitaria</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Confeitaria</h1>
+        <div class="form-container">
+            <div class="form-group">
+                <label for="tipo">Tipo:</label>
+                <input type="text" id="tipo">
+            </div>
+            <div class="form-group">
+                <label for="massa">Massa:</label>
+                <input type="text" id="massa">
+            </div>
+            <div class="form-group">
+                <label for="recheio">Recheio:</label>
+                <input type="text" id="recheio">
+            </div>
+            <div class="form-group">
+                <label for="cobertura">Cobertura:</label>
+                <input type="text" id="cobertura">
+            </div>
+            <div class="form-group">
+                <label for="preco">Preço:</label>
+                <input type="text" id="preco">
+            </div>
+            <button onclick="adicionarBolo()">Adicionar / Editar</button>
+        </div>
+
+        <h2>Bolos Adicionados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Massa</th>
+                    <th>Recheio</th>
+                    <th>Cobertura</th>
+                    <th>Preço</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela"></tbody>
+        </table>
+    </div>
+
+    <script>
+        var bolos = [];
+        var indiceEdicao = -1;
+
+        // func para add novo bolo ou editar existente
+        function adicionarBolo() {
+            var tipo = document.getElementById("tipo").value;
+            var massa = document.getElementById("massa").value;
+            var recheio = document.getElementById("recheio").value;
+            var cobertura = document.getElementById("cobertura").value;
+            var preco = document.getElementById("preco").value;
+
+            
+            if (tipo && massa && recheio && cobertura && preco) {
+                if (indiceEdicao === -1) {
+                    var bolo = {
+                        tipo: tipo,
+                        massa: massa,
+                        recheio: recheio,
+                        cobertura: cobertura,
+                        preco: preco
+                    };
+                    bolos.push(bolo);
+                } else {
+
+                    bolos[indiceEdicao].tipo = tipo;
+                    bolos[indiceEdicao].massa = massa;
+                    bolos[indiceEdicao].recheio = recheio;
+                    bolos[indiceEdicao].cobertura = cobertura;
+                    bolos[indiceEdicao].preco = preco;
+                    indiceEdicao = -1;
+                }
+                atualizarTabelaBolos();
+                limparCampos();
+            } else {
+                alert("Por favor, preencha todos os campos.");
+            }
+        }
+
+        // func para atualizar a tabela de bolos
+        function atualizarTabelaBolos() {
+            var corpoTabela = document.getElementById("corpo-tabela");
+            corpoTabela.innerHTML = "";
+
+            // adicionar cada bolo à tabela
+            bolos.forEach(function(bolo, index) {
+                var newRow = corpoTabela.insertRow();
+                newRow.insertCell(0).textContent = bolo.tipo;
+                newRow.insertCell(1).textContent = bolo.massa;
+                newRow.insertCell(2).textContent = bolo.recheio;
+                newRow.insertCell(3).textContent = bolo.cobertura;
+                newRow.insertCell(4).textContent = "R$ " + bolo.preco;
+
+                // botões de editar e excluir para cada bolo na tabela
+                var cellAcoes = newRow.insertCell(5);
+                var editarButton = document.createElement("button");
+                editarButton.textContent = "Editar";
+                editarButton.onclick = function() {
+                    preencherCamposEdicao(index);
+                };
+                cellAcoes.appendChild(editarButton);
+
+                var excluirButton = document.createElement("button");
+                excluirButton.textContent = "Excluir";
+                excluirButton.className = "btn-excluir";
+                excluirButton.onclick = function() {
+                    excluirBolo(index);
+                };
+                cellAcoes.appendChild(excluirButton);
+            });
+        }
+
+        // func preencher campos de entrada com dados do bolo selecionado para edição
+        function preencherCamposEdicao(index) {
+            indiceEdicao = index;
+            var bolo = bolos[index];
+            document.getElementById("tipo").value = bolo.tipo;
+            document.getElementById("massa").value = bolo.massa;
+            document.getElementById("recheio").value = bolo.recheio;
+            document.getElementById("cobertura").value = bolo.cobertura;
+            document.getElementById("preco").value = bolo.preco;
+        }
+
+        // func limpar os campos
+        function limparCampos() {
+            document.getElementById("tipo").value = "";
+            document.getElementById("massa").value = "";
+            document.getElementById("recheio").value = "";
+            document.getElementById("cobertura").value = "";
+            document.getElementById("preco").value = "";
+        }
+
+        // func excluir bolo
+        function excluirBolo(index) {
+            bolos.splice(index, 1);
+            atualizarTabelaBolos();
+        }
+
+        atualizarTabelaBolos();
+    </script>
+</body>
+</html>
